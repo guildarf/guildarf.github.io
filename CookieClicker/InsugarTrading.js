@@ -18,7 +18,7 @@
      */
     const data = [];
     function datasetUrl(bankLevel) {
-        return 'https://staticvariablejames.github.io/InsugarTrading/data/lvl' + bankLevel + '.js';
+        return 'https://guildarf.github.io/CookieClicker/data/lvl' + bankLevel + '.js';
     }
     const highestAvailableDatasetLevel = 50;
     /* Downloads a dataset from the github website.

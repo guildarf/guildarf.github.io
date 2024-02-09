@@ -46,7 +46,7 @@ IdleTrading.launch = function(){
 		}
 		
 		if (Game.prefs.popups) Game.Popup(IdleTrading.name + ' loaded!');
-		else Game.Notify(IdleTrading.name + ' loaded!', '', '', 1, 1);
+		else Game.Notify(IdleTrading.name + ' loaded!', '', '', 1, 3);
 	}
 
 
@@ -204,34 +204,34 @@ IdleTrading.launch = function(){
 				var priceInCookies = price * Game.cookiesPsRawHighest;
 				var maxStockBuy=Math.round(maxInvestment/priceInCookies);
 
-				if(price <= conf.buyThresh && maxStockBuy>=1)
+				if(price <= conf.buyThresh && good.stock != M.getGoodMaxStock(good) && maxStockBuy>=1)
                 {
 					var md = good.mode
 					if((md != 2 && md != 4 || price==1) && M.buyGood(iG, maxStockBuy))
                     {
 						var stock = good.stock
                         stock = good.stock - stock
-                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name, good.icon,6);
+                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name, good.icon,0);
                     }
 					else
 					{
-						Game.Notify("Waiting",good.name + "is below buying threshold but seems it will continue falling. Waiting" , good.icon,6);
+						Game.Notify("Waiting",good.name + "is below buying threshold but seems it will continue falling. Waiting" , good.icon,0);
 					}
                 }
 			}
 			if(IdleTrading.config.autoSell && conf.sellThresh != -1){
-				if(price >= conf.sellThresh)
+				if(price >= conf.sellThresh && good.stock != 0)
                 {
 					var md = good.mode
 					if(md != 1 && md != 3 && M.sellGood(iG, 10000))
                     {
 						var stock = good.stock
                         stock = stock-good.stock
-                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name, good.icon,6);
+                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name, good.icon,0);
                     }
 					else
 					{
-						Game.Notify("Holding",good.name + "is above buying threshold but seems it will continue rising. Holding" , good.icon,6);
+						Game.Notify("Holding",good.name + "is above selling threshold but seems it will continue rising. Holding" , good.icon,0);
 					}
                 }
 			}

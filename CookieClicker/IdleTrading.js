@@ -13,8 +13,8 @@ IdleTrading.launch = function(){
 			autoSell: 1,
 			commonBuyThreshold: -1,
 			commonSellThreshold: -1,
-			maxCost = -1,
-			maxCostString = -1,
+			maxCost: -1,
+			maxCostString: -1,
 
 		};
 		
@@ -282,8 +282,8 @@ IdleTrading.launch = function(){
 					if((md != 2 && md != 4 || price==1) && M.buyGood(iG, maxStockBuy))
                     {
                         stock = good.stock - stock
-                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name + "at a total cost of " +
-									Beautify(priceInCookies*stock) + "cookies.", good.icon,0);
+                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name + " at a total cost of " +
+									Beautify(priceInCookies*stock) + " cookies.", good.icon,0);
                     }
 					else
 					{
@@ -299,8 +299,8 @@ IdleTrading.launch = function(){
 					if(md != 1 && md != 3 && M.sellGood(iG, 10000))
                     {
                         stock = stock-good.stock
-                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name+ "for a total of " +
-						Beautify(priceInCookies*stock) + "cookies.", good.icon,0);
+                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name+ " for a revenue total of " +
+						Beautify(priceInCookies*stock) + " cookies.", good.icon,0);
                     }
 					else
 					{

@@ -105,7 +105,7 @@ IdleTrading.launch = function(){
 	}
 
 	IdleTrading.showValueIfValid=function(value, defaultValue){
-		if(isNan(value))return defaultValue;
+		if(isNaN(value))return defaultValue;
 		return value
 	}
 	//***********************************

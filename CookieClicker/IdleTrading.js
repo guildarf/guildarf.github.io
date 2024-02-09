@@ -79,11 +79,11 @@ IdleTrading.launch = function(){
 						'</div>' + 
 						'<div class="listing">' + m.ToggleButton(IdleTrading.config, 'autoBuy', 'IdleTrading_autoBuyButton', 'AutoBuy ON', 'AutoBuy OFF', "IdleTrading.Toggle") +
 												  m.ToggleButton(IdleTrading.config, 'autoSell', 'IdleTrading_autoSellButton', 'AutoSell ON', 'AutoSell OFF', "IdleTrading.Toggle") + '</div>' +
-						'<div class="listing">' + '<label> General Buy at:</label>' + m.InputBox('common_buy_threshold', 65, IdleTrading.showValueIfValid(this.value, IdleTrading.config.commonBuyThreshold), 'IdleTrading.UpdateGeneralThreshold(this.value, 0)') +
-												  '<label> General Sell at:</label>' + m.InputBox('common_sell_threshold', 65, IdleTrading.showValueIfValid(this.value, IdleTrading.config.commonSellThreshold), 'IdleTrading.UpdateGeneralThreshold(this.value, 1)')+ '</div>' +
-						'<div class="listing">' + '<label> Maximum cost of operation:</label>' + m.InputBox('maxCost', 65, IdleTrading.showValueIfValid(this.value, IdleTrading.config.maxCostString), 'IdleTrading.UpdateMaxCost(this.value)') +
-												  '<label> Example: 917 sexdecillion. Also accepts the % for a percentage of current stored cookies. -1 for unlimited</label>' + '</div>';
-			
+						'<div class="listing">' + '<label> General Buy at:</label>' + m.InputBox('common_buyThresh', 65, IdleTrading.config.commonBuyThreshold, '') +
+												  '<label> General Sell at:</label>' + m.InputBox('common_sell_threshold', 65, IdleTrading.config.commonSellThreshold, '')+ '</div>' +
+						'<div class="listing">' + '<label> Maximum cost of operation:</label>' + m.InputBox('maxCost', 65, IdleTrading.config.maxCostString, '') +
+												  '<label> Example: 917 sexdecillion. Also accepts the % for a percentage of current stored cookies. -1 for unlimited</label>' + '</div>' +
+						'<div class="listing">' + m.ActionButton("IdleTrading.UpdateInputBoxes(); Game.UpdateMenu();", 'Validate') + '</div>'
 			str += m.Header('Goods');
 			
 			for(var iG = 0; iG < M.goodsById.length; iG++){
@@ -91,12 +91,13 @@ IdleTrading.launch = function(){
 				var conf = IdleTrading.config.goods[iG];
 				
 				str += '<div class="listing" style="text-align:left;"><div class="icon" style="pointer-events:none;display:inline-block;transform:scale(0.5);margin:-16px -18px -16px -14px;vertical-align:middle;background-position:' + (-me.icon[0] * 48) + 'px ' + (-me.icon[1] * 48) + 'px;"></div><span class="bankSymbol" style="width:30px;overflow:hidden;white-space:nowrap;">' + me.symbol + '</span>';
-				str += '<label> Buy at:</label>' + m.InputBox('IdleTrading_buyThresh_' + iG, 65, IdleTrading.showValueIfValid(this.value, conf.buyThresh), 'IdleTrading.UpdatePref(' + iG + ', this.value, 0)');
-				str += '<label> Sell at:</label>' + m.InputBox('IdleTrading_sellThresh_' + iG, 65, IdleTrading.showValueIfValid(this.value, conf.sellThresh), 'IdleTrading.UpdatePref(' + iG + ', this.value, 1)');
+				str += '<label> Buy at:</label>' + m.InputBox('IdleTrading_buyThresh_' + iG, 65, conf.buyThresh, '');
+				str += '<label> Sell at:</label>' + m.InputBox('IdleTrading_sellThresh_' + iG, 65, conf.sellThresh, '');
 				str += '<label>Historical min: <b>$' + Beautify(conf.minPrice, 2) + '</b>; Historical max: <b>$' + Beautify(conf.maxPrice, 2) + '</b></label>';
 				str += '</div>';
 			}
-			
+			str += '<div class="listing">' + m.ActionButton("IdleTrading.UpdateInputBoxes(); Game.UpdateMenu();", 'Validate') + '</div>'
+
 			return str;
 		}
 		else{
@@ -104,14 +105,25 @@ IdleTrading.launch = function(){
 		}
 	}
 
-	IdleTrading.showValueIfValid=function(value, defaultValue){
-		if(isNaN(value))return defaultValue;
-		return value
+	IdleTrading.UpdateInputBoxes = function(){
+		var textBox = document.getElementById("common_buyThresh");
+		IdleTrading.UpdateGeneralThreshold(textBox.value, 0);
+
+		textBox = document.getElementById("common_sellThresh");
+		IdleTrading.UpdateGeneralThreshold(textBox.value, 1);
+
+		textBox = document.getElementById("maxCost");
+		IdleTrading.UpdateMaxCost(textBox.value);
+
+		for(var iG = 0; iG < M.goodsById.length; iG++){
+			textBox = document.getElementById('IdleTrading_buyThresh_' + iG);
+			IdleTrading.UpdatePref(iG, textBox.value, 0);
+
+			textBox = document.getElementById('IdleTrading_sellThresh_' + iG);
+			IdleTrading.UpdatePref(iG, textBox.value, 1);
+		}
 	}
-	//***********************************
-	//    Configuration
-	//***********************************
-	
+
 	IdleTrading.save = function(){
 		return JSON.stringify(IdleTrading.config);
 	}

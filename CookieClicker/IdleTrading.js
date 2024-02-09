@@ -10,14 +10,19 @@ IdleTrading.launch = function(){
 		var conf = {
 			goods: [],
 			autoBuy: 1,
-			autoSell: 1
+			autoSell: 1,
+			commonBuyThreshold: -1,
+			commonSellThreshold: -1,
+			maxCost = -1,
+			maxCostString = -1,
+
 		};
 		
 		for(var iG = 2; iG < Game.ObjectsN; iG++){
 			conf.goods.push({
 				active: true,
-				buyThresh: 1,
-				sellThresh: 150,
+				buyThresh: -1,
+				sellThresh: -1,
 				minPrice: 99999,
 				maxPrice:-99999
 			});
@@ -46,7 +51,7 @@ IdleTrading.launch = function(){
 		}
 		
 		if (Game.prefs.popups) Game.Popup(IdleTrading.name + ' loaded!');
-		else Game.Notify(IdleTrading.name + ' loaded!', '', '', 1, 3);
+		else Game.Notify(IdleTrading.name + ' loaded!', '', '', 1, 0);
 	}
 
 
@@ -73,7 +78,11 @@ IdleTrading.launch = function(){
 						(typeof InsugarTrading == 'undefined' ? '' : m.ActionButton("IdleTrading.importInsugarTrading(); Game.UpdateMenu();", 'Import from Insugar Trading')) + 
 						'</div>' + 
 						'<div class="listing">' + m.ToggleButton(IdleTrading.config, 'autoBuy', 'IdleTrading_autoBuyButton', 'AutoBuy ON', 'AutoBuy OFF', "IdleTrading.Toggle") +
-												  m.ToggleButton(IdleTrading.config, 'autoSell', 'IdleTrading_autoSellButton', 'AutoSell ON', 'AutoSell OFF', "IdleTrading.Toggle") + '</div>';
+												  m.ToggleButton(IdleTrading.config, 'autoSell', 'IdleTrading_autoSellButton', 'AutoSell ON', 'AutoSell OFF', "IdleTrading.Toggle") + '</div>' +
+						'<div class="listing">' + '<label> General Buy at:</label>' + m.InputBox('common_buy_threshold', 65, IdleTrading.config.commonBuyThresh, 'IdleTrading.UpdateGeneralThreshold(this.value, 0)') +
+												  '<label> General Sell at:</label>' + m.InputBox('common_sell_threshold', 65, IdleTrading.config.commonSellThresh, 'IdleTrading.UpdateGeneralThreshold(this.value, 1)')+ '</div>' +
+						'<div class="listing">' + '<label> Maximum cost of operation:</label>' + m.InputBox('maxCost', 65, IdleTrading.config.maxCostString, 'IdleTrading.UpdatemaxCost(this.value)') +
+												  '<label> Example: 917 sexdecillion. Also accepts the % for a percentage of current stored cookies. -1 for unlimited</label>' + '</div>';
 			
 			str += m.Header('Goods');
 			
@@ -162,6 +171,68 @@ IdleTrading.launch = function(){
 		Game.UpdateMenu();
 	}
 	
+	IdleTrading.UpdateGeneralThreshold = function(value, mode){
+		var val = parseFloat(value);
+		if(!isNaN(val)){
+			if(mode == 0) IdleTrading.config.CommonBuyThresh = val;
+			if(mode == 1) IdleTrading.config.commonSellThresh = val;
+		}
+		Game.UpdateMenu();
+	}
+
+	IdleTrading.UpdateMaxCost(value){
+		var parts = input.trim().split(/\s+/);
+		var processedValue = NaN;
+		if (value == -1){
+			processedValue = -1;
+		}else if (parts.length === 2) {
+			var numberPart = parseFloat(parts[0]);
+			var unitPart = parts[1].toLowerCase();
+			const unitPowers = {
+				'%':0.01, //percent of max cookies
+				'': 1, // Sin unidad (numero normal)
+				'thousand': 1e3,
+				'million': 1e6,
+				'billion': 1e9,
+				'trillion': 1e12,
+				'quadrillion': 1e15,
+				'quintillion': 1e18,
+				'sextillion': 1e21,
+				'septillion': 1e24,
+				'octillion': 1e27,
+				'nonillion': 1e30,
+				'decillion': 1e33,
+				'undecillion': 1e36,
+				'duodecillion': 1e39,
+				'tredecillion': 1e42,
+				'quattuordecillion': 1e45,
+				'quindecillion': 1e48,
+				'sexdecillion': 1e51,
+				'septendecillion': 1e54,
+				'octodecillion': 1e57,
+				'novemdecillion': 1e60,
+				'vigintillion': 1e63,
+				'unvigintillion': 1e66,
+				'duovigintillion': 1e69,
+				'trevigintillion': 1e72,
+				// Agrega mas unidades si es necesario
+			};
+			// Verificar si la unidad es reconocida
+			if (unitPart in unitPowers) {
+				unitPowers[unitPart]
+				if(unitPowers[unitPart]<1)
+				{
+					numberPart = Math.min(Math.max(numberPart, 0), 99.9999);
+				}
+				// Multiplicar el numero por la potencia correspondiente de 10 segun la unidad
+				processedValue = numberPart * unitPowers[unitPart];
+		}
+		if(!isNaN(processedValue)){
+			IdleTrading.config.maxCost = processedValue;
+			IdleTrading.config.maxCostString = value;
+		}
+	}
+
 	IdleTrading.importInsugarTrading = function(){
 		var config = IdleTrading.config;
 		var quant = InsugarTrading.settings.quantilesToDisplay;
@@ -197,25 +268,26 @@ IdleTrading.launch = function(){
 			var good = M.goodsById[iG];
 			var conf = IdleTrading.config.goods[iG];
 			var price = Math.round(100 * M.getGoodPrice(good)) / 100;
+			var priceInCookies =  M.getGoodPrice(good) * Game.cookiesPsRawHighest;
 			
-			if(IdleTrading.config.autoBuy && conf.buyThresh != -1){
-
-				var maxInvestment = Game.cookies*0.1;
-				var priceInCookies = price * Game.cookiesPsRawHighest;
-				var maxStockBuy=Math.round(maxInvestment/priceInCookies);
+			if(IdleTrading.config.autoBuy && IdleTrading.config.buyThresh != -1){
+				var maxCost = IdleTrading.config.maxCost;
+				maxCost = (maxCost<1? Game.cookies * maxCost : maxCost);
+				var maxStockBuy=Math.round(maxCost/priceInCookies);
 
 				if(price <= conf.buyThresh && good.stock != M.getGoodMaxStock(good) && maxStockBuy>=1)
                 {
 					var md = good.mode
+					var stock = good.stock
 					if((md != 2 && md != 4 || price==1) && M.buyGood(iG, maxStockBuy))
                     {
-						var stock = good.stock
                         stock = good.stock - stock
-                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name, good.icon,0);
+                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name + "at a total cost of " +
+									Beautify(priceInCookies*stock) + "cookies.", good.icon,0);
                     }
 					else
 					{
-						Game.Notify("Waiting",good.name + "is below buying threshold but seems it will continue falling. Waiting" , good.icon,0);
+						Game.Notify("Waiting",good.name + "is below buying threshold but seems it will continue falling. Waiting", good.icon,0);
 					}
                 }
 			}
@@ -223,11 +295,12 @@ IdleTrading.launch = function(){
 				if(price >= conf.sellThresh && good.stock != 0)
                 {
 					var md = good.mode
+					var stock = good.stock
 					if(md != 1 && md != 3 && M.sellGood(iG, 10000))
                     {
-						var stock = good.stock
                         stock = stock-good.stock
-                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name, good.icon,0);
+                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name+ "for a total of " +
+						Beautify(priceInCookies*stock) + "cookies.", good.icon,0);
                     }
 					else
 					{

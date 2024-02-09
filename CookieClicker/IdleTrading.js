@@ -180,7 +180,7 @@ IdleTrading.launch = function(){
 		Game.UpdateMenu();
 	}
 
-	IdleTrading.UpdateMaxCost(value){
+	IdleTrading.UpdateMaxCost = function(value){
 		var parts = input.trim().split(/\s+/);
 		var processedValue = NaN;
 		if (value == -1){

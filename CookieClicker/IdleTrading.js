@@ -191,6 +191,7 @@ IdleTrading.launch = function(){
 	}
 	
 	IdleTrading.Logic = function(){
+		var modeDecoder = ['stable','slowly rising','slowly falling','rapidly rising','rapidly falling','fluctuating']
 		var M = Game.Objects['Bank'].minigame;
 		for(var iG = 0; iG < M.goodsById.length; iG++){
 			var good = M.goodsById[iG];
@@ -198,25 +199,40 @@ IdleTrading.launch = function(){
 			var price = Math.round(100 * M.getGoodPrice(good)) / 100;
 			
 			if(IdleTrading.config.autoBuy && conf.buyThresh != -1){
-				if(price <= conf.buyThresh)
+
+				var maxInvestment = Game.cookies*0.1;
+				var priceInCookies = price * Game.cookiesPsRawHighest;
+				var maxStockBuy=Math.round(maxInvestment/priceInCookies);
+
+				if(price <= conf.buyThresh && maxStockBuy>=1)
                 {
-                    var stock = good.stock
-                    if(M.buyGood(iG, 10000))
+					var md = good.mode
+					if((md != 2 && md != 4 || price==1) && M.buyGood(iG, maxStockBuy))
                     {
+						var stock = good.stock
                         stock = good.stock - stock
                         Game.Notify("Buy stock","Bought "+stock+"x " + good.name, good.icon,6);
                     }
+					else
+					{
+						Game.Notify("Waiting",good.name + "is below buying threshold but seems it will continue falling. Waiting" , good.icon,6);
+					}
                 }
 			}
 			if(IdleTrading.config.autoSell && conf.sellThresh != -1){
 				if(price >= conf.sellThresh)
                 {
-                    var stock = good.stock
-                    if(M.sellGood(iG, 10000))
+					var md = good.mode
+					if(md != 1 && md != 3 && M.sellGood(iG, 10000))
                     {
+						var stock = good.stock
                         stock = stock-good.stock
                         Game.Notify("Sell stock","Sold "+stock+"x " + good.name, good.icon,6);
                     }
+					else
+					{
+						Game.Notify("Holding",good.name + "is above buying threshold but seems it will continue rising. Holding" , good.icon,6);
+					}
                 }
 			}
 			

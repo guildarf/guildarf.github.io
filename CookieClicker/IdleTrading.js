@@ -226,6 +226,7 @@ IdleTrading.launch = function(){
 				}
 				// Multiplicar el numero por la potencia correspondiente de 10 segun la unidad
 				processedValue = numberPart * unitPowers[unitPart];
+			}
 		}
 		if(!isNaN(processedValue)){
 			IdleTrading.config.maxCost = processedValue;

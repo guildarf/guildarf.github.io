@@ -185,6 +185,11 @@ IdleTrading.launch = function(){
 		var processedValue = NaN;
 		if (value == -1){
 			processedValue = -1;
+		}else if(value.substring(value.length - 1) == '%'){
+			var numberPart = parseFloat(value.substring(0,value.length - 1));
+			if(isNaN(numberPart)) return;
+			numberPart = Math.min(Math.max(numberPart, 0), 99.9999);
+			processedValue = numberPart/100;
 		}else if (parts.length === 2) {
 			var numberPart = parseFloat(parts[0]);
 			var unitPart = parts[1].toLowerCase();
@@ -219,11 +224,6 @@ IdleTrading.launch = function(){
 			};
 			// Verificar si la unidad es reconocida
 			if (unitPart in unitPowers) {
-				unitPowers[unitPart]
-				if(unitPowers[unitPart]<1)
-				{
-					numberPart = Math.min(Math.max(numberPart, 0), 99.9999);
-				}
 				// Multiplicar el numero por la potencia correspondiente de 10 segun la unidad
 				processedValue = numberPart * unitPowers[unitPart];
 			}

@@ -79,9 +79,9 @@ IdleTrading.launch = function(){
 						'</div>' + 
 						'<div class="listing">' + m.ToggleButton(IdleTrading.config, 'autoBuy', 'IdleTrading_autoBuyButton', 'AutoBuy ON', 'AutoBuy OFF', "IdleTrading.Toggle") +
 												  m.ToggleButton(IdleTrading.config, 'autoSell', 'IdleTrading_autoSellButton', 'AutoSell ON', 'AutoSell OFF', "IdleTrading.Toggle") + '</div>' +
-						'<div class="listing">' + '<label> General Buy at:</label>' + m.InputBox('common_buy_threshold', 65, IdleTrading.config.commonBuyThresh, 'IdleTrading.UpdateGeneralThreshold(this.value, 0)') +
-												  '<label> General Sell at:</label>' + m.InputBox('common_sell_threshold', 65, IdleTrading.config.commonSellThresh, 'IdleTrading.UpdateGeneralThreshold(this.value, 1)')+ '</div>' +
-						'<div class="listing">' + '<label> Maximum cost of operation:</label>' + m.InputBox('maxCost', 65, IdleTrading.config.maxCostString, 'IdleTrading.UpdatemaxCost(this.value)') +
+						'<div class="listing">' + '<label> General Buy at:</label>' + m.InputBox('common_buy_threshold', 65, IdleTrading.config.commonBuyThreshold, 'IdleTrading.UpdateGeneralThreshold(this.value, 0)') +
+												  '<label> General Sell at:</label>' + m.InputBox('common_sell_threshold', 65, IdleTrading.config.commonSellThreshold, 'IdleTrading.UpdateGeneralThreshold(this.value, 1)')+ '</div>' +
+						'<div class="listing">' + '<label> Maximum cost of operation:</label>' + m.InputBox('maxCost', 65, IdleTrading.config.maxCostString, 'IdleTrading.UpdateMaxCost(this.value)') +
 												  '<label> Example: 917 sexdecillion. Also accepts the % for a percentage of current stored cookies. -1 for unlimited</label>' + '</div>';
 			
 			str += m.Header('Goods');

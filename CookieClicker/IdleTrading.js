@@ -174,14 +174,14 @@ IdleTrading.launch = function(){
 	IdleTrading.UpdateGeneralThreshold = function(value, mode){
 		var val = parseFloat(value);
 		if(!isNaN(val)){
-			if(mode == 0) IdleTrading.config.CommonBuyThresh = val;
-			if(mode == 1) IdleTrading.config.commonSellThresh = val;
+			if(mode == 0) IdleTrading.config.CommonBuyThreshold = val;
+			if(mode == 1) IdleTrading.config.commonSellThreshold = val;
 		}
 		Game.UpdateMenu();
 	}
 
 	IdleTrading.UpdateMaxCost = function(value){
-		var parts = input.trim().split(/\s+/);
+		var parts = value.trim().split(/\s+/);
 		var processedValue = NaN;
 		if (value == -1){
 			processedValue = -1;

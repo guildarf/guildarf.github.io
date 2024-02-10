@@ -82,8 +82,8 @@ IdleTrading.launch = function(){
 						'<div class="listing">' + '<label> General Buy at:</label>' + m.InputBox('common_buyThresh', 65, IdleTrading.config.commonBuyThreshold, 'IdleTrading.UpdateGeneralThreshold(this.value, 0)') +
 												  '<label> General Sell at:</label>' + m.InputBox('common_sellThresh', 65, IdleTrading.config.commonSellThreshold, 'IdleTrading.UpdateGeneralThreshold(this.value, 1)')+ '</div>' +
 						'<div class="listing">' + '<label> Maximum cost of operation:</label>' + m.InputBox('maxCost', 65, IdleTrading.config.maxCostString, 'IdleTrading.UpdateMaxCost(this.value)') +
-												  '<label> Example: 917 sexdecillion. Also accepts the % for a percentage of current stored cookies. -1 for unlimited</label>' + '</div>' +
-						'<div class="listing">' + m.ActionButton("IdleTrading.UpdateInputBoxes(); Game.UpdateMenu();", 'Validate') + '</div>'
+												  '<label> Example: 917 sexdecillion. Also accepts the % for a percentage of current stored cookies. -1 for unlimited</label>' + '</div>';
+						//'<div class="listing">' + m.ActionButton("IdleTrading.UpdateInputBoxes(); Game.UpdateMenu();", 'Validate') + '</div>'
 			str += m.Header('Goods');
 			
 			for(var iG = 0; iG < M.goodsById.length; iG++){
@@ -96,7 +96,7 @@ IdleTrading.launch = function(){
 				str += '<label>Historical min: <b>$' + Beautify(conf.minPrice, 2) + '</b>; Historical max: <b>$' + Beautify(conf.maxPrice, 2) + '</b></label>';
 				str += '</div>';
 			}
-			str += '<div class="listing">' + m.ActionButton("IdleTrading.UpdateInputBoxes(); Game.UpdateMenu();", 'Validate') + '</div>'
+			//str += '<div class="listing">' + m.ActionButton("IdleTrading.UpdateInputBoxes(); Game.UpdateMenu();", 'Validate') + '</div>'
 
 			return str;
 		}
@@ -190,7 +190,7 @@ IdleTrading.launch = function(){
 	IdleTrading.UpdateGeneralThreshold = function(value, mode){
 		var val = parseFloat(value);
 		if(!isNaN(val)){
-			if(mode == 0) IdleTrading.config.CommonBuyThreshold = val;
+			if(mode == 0) IdleTrading.config.commonBuyThreshold = val;
 			if(mode == 1) IdleTrading.config.commonSellThreshold = val;
 		}
 		Game.UpdateMenu();

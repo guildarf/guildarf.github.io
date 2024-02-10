@@ -285,40 +285,47 @@ IdleTrading.launch = function(){
 		for(var iG = 0; iG < M.goodsById.length; iG++){
 			var good = M.goodsById[iG];
 			var conf = IdleTrading.config.goods[iG];
+			var buyThresh = (conf.buyThresh != -1?conf.buyThresh:IdleTrading.config.commonBuyThreshold);
+			var sellThresh = (conf.sellThresh != -1?conf.sellThresh:IdleTrading.config.commonSellThreshold);
 			var price = Math.round(100 * M.getGoodPrice(good)) / 100;
 			var priceInCookies =  M.getGoodPrice(good) * Game.cookiesPsRawHighest;
 			
-			if(IdleTrading.config.autoBuy && IdleTrading.config.buyThresh != -1){
+			if(IdleTrading.config.autoBuy && buyThresh != -1){
 				var maxCost = IdleTrading.config.maxCost;
-				maxCost = (maxCost<1? Game.cookies * maxCost : maxCost);
-				var maxStockBuy=Math.round(maxCost/priceInCookies);
+				if(IdleTrading.config.maxCostString.includes('%'))
+				{
+					maxCost = Game.cookies * maxCost;
+				}
+				var maxStockBuy= maxCost==-1? 100000 : Math.round(maxCost/priceInCookies);
 
-				if(price <= conf.buyThresh && good.stock != M.getGoodMaxStock(good) && maxStockBuy>=1)
+				if(price <= buyThresh && good.stock != M.getGoodMaxStock(good) && maxStockBuy>=1)
                 {
 					var md = good.mode
 					var stock = good.stock
 					if((md != 2 && md != 4 || price==1) && M.buyGood(iG, maxStockBuy))
                     {
                         stock = good.stock - stock
-                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name + " at a total cost of " +
-									Beautify(priceInCookies*stock) + " cookies.", good.icon,0);
+                        Game.Notify("Buy stock","Bought "+stock+"x " + good.name + " for " + price + 
+						"$ each, at a total cost of " + Beautify(priceInCookies*stock) + " cookies.",
+						good.icon, 0);
                     }
 					else
 					{
-						Game.Notify("Waiting",good.name + "is below buying threshold but seems it will continue falling. Waiting", good.icon,0);
+						Game.Notify("Waiting", good.name + "is below buying threshold but seems it will continue falling. Waiting", good.icon,0);
 					}
                 }
 			}
-			if(IdleTrading.config.autoSell && conf.sellThresh != -1){
-				if(price >= conf.sellThresh && good.stock != 0)
+			if(IdleTrading.config.autoSell && sellThresh != -1){
+				if(price >= sellThresh && good.stock != 0)
                 {
 					var md = good.mode
 					var stock = good.stock
 					if(md != 1 && md != 3 && M.sellGood(iG, 10000))
                     {
                         stock = stock-good.stock
-                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name+ " for a revenue total of " +
-						Beautify(priceInCookies*stock) + " cookies.", good.icon,0);
+                        Game.Notify("Sell stock","Sold "+stock+"x " + good.name + " for " + price + 
+						"$ each at a total revenue of " + Beautify(priceInCookies*stock) + " cookies.",
+						good.icon, 0);
                     }
 					else
 					{

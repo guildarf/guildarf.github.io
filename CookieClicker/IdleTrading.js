@@ -311,7 +311,7 @@ IdleTrading.launch = function(){
                     }
 					else
 					{
-						Game.Notify("Waiting", good.name + "is below buying threshold but seems it will continue falling. Waiting", good.icon,0);
+						Game.Notify("Waiting", good.name + " is below buying threshold but seems it will continue falling. Waiting", good.icon,0);
 					}
                 }
 			}
@@ -329,7 +329,7 @@ IdleTrading.launch = function(){
                     }
 					else
 					{
-						Game.Notify("Holding",good.name + "is above selling threshold but seems it will continue rising. Holding" , good.icon,0);
+						Game.Notify("Holding",good.name + " is above selling threshold but seems it will continue rising. Holding" , good.icon,0);
 					}
                 }
 			}

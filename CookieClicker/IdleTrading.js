@@ -292,7 +292,7 @@ IdleTrading.launch = function(){
 			
 			if(IdleTrading.config.autoBuy && buyThresh != -1){
 				var maxCost = IdleTrading.config.maxCost;
-				if(IdleTrading.config.maxCostString.includes('%'))
+				if(String(IdleTrading.config.maxCostString).includes('%'))
 				{
 					maxCost = Game.cookies * maxCost;
 				}

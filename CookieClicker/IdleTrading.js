@@ -302,7 +302,8 @@ IdleTrading.launch = function(){
                 {
 					var md = good.mode
 					var stock = good.stock
-					if((md != 2 && md != 4 || price==1) && M.buyGood(iG, maxStockBuy))
+					var is_falling=(md == 2 || md == 4);
+					if(M.buyGood(iG, maxStockBuy))
                     {
                         stock = good.stock - stock
                         Game.Notify("Buy stock","Bought "+stock+"x " + good.name + " for " + price + 
@@ -311,7 +312,7 @@ IdleTrading.launch = function(){
                     }
 					else
 					{
-						Game.Notify("Waiting", good.name + " is below buying threshold but seems it will continue falling. Waiting", good.icon, 5);
+						//Game.Notify("Waiting", good.name + " is below buying threshold but seems it will continue falling. Waiting", good.icon, 5);
 					}
                 }
 			}
@@ -320,7 +321,8 @@ IdleTrading.launch = function(){
                 {
 					var md = good.mode
 					var stock = good.stock
-					if(md != 1 && md != 3 && M.sellGood(iG, 10000))
+					var is_rising = (md == 1 || md == 3);
+					if(M.sellGood(iG, 10000))
                     {
                         stock = stock-good.stock
                         Game.Notify("Sell stock","Sold "+stock+"x " + good.name + " for " + price + 
@@ -329,7 +331,7 @@ IdleTrading.launch = function(){
                     }
 					else
 					{
-						Game.Notify("Holding",good.name + " is above selling threshold but seems it will continue rising. Holding" , good.icon, 5);
+						//Game.Notify("Holding",good.name + " is above selling threshold but seems it will continue rising. Holding" , good.icon, 5);
 					}
                 }
 			}
